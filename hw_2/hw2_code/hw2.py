@@ -9,7 +9,7 @@ from numpy.linalg import solve
 import matplotlib.pyplot as plt
 
 NUM_CLASSES = 10
-d = 1000 # the raisen dimension
+d = 20000 # the raisen dimension
 G_transpose = np.random.normal(scale = 0.1, size = (d, 784)) #the transpose of G, dim matched
 b = np.random.random((d,1))*6.2832
 def load_dataset():
@@ -83,13 +83,7 @@ if __name__ == "__main__":
     y_test = one_hot(labels_test)
     X_train, X_test = phi(X_train), phi(X_test)
     start_time = time.time()
-    model = train(X_train, y_train, reg=0.1)
-    print("Training through closed form solution takes :{0}".format(time.time() - start_time))
-    pred_labels_train = predict(model, X_train)
-    pred_labels_test = predict(model, X_test)
-    print("Closed form solution")
-    print("Train accuracy: {0}".format(metrics.accuracy_score(labels_train, pred_labels_train)))
-    print("Test accuracy: {0}".format(metrics.accuracy_score(labels_test, pred_labels_test)))
+   
 
     start_time = time.time()
     model = train_gd(X_train, y_train, alpha=1e-3, reg=0.1, num_iter=20000)[-1]
@@ -110,21 +104,3 @@ if __name__ == "__main__":
     print("Train accuracy: {0}".format(metrics.accuracy_score(labels_train, pred_labels_train)))
     print("Test accuracy: {0}".format(metrics.accuracy_score(labels_test, pred_labels_test)))
 
-
-
-    #plot the error against the num_iter
-    WgdList = train_gd(X_train, y_train, alpha=1e-3, reg=0, num_iter=40000)
-    WsdList = train_sgd(X_train, y_train, alpha=1e-3, reg=0, num_iter=40000)
-    WgdErrorList = [1-metrics.accuracy_score(labels_train, predict(model, X_train)) for model in WgdList]
-    WsdErrorList = [1-metrics.accuracy_score(labels_train, predict(model, X_train)) for model in WsdList]
-    plt.figure()
-    x = np.arange(100,40000 + 1, 100)
-    print(x)
-    print(WgdErrorList)
-    print(WsdErrorList)
-
-    plt.plot(x, WgdErrorList, "r")
-    plt.plot(x, WsdErrorList, "b")
-    plt.axis([100,40000,0,0.3])
-    plt.title("red: gd error against Num_iter  blue: sgd error against Num_iter")
-    plt.show()
